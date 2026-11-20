@@ -38,14 +38,10 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
       with:
-        api-level: 36
-        construct-api-level: true
+        accept-android-sdk-licenses: true
 
     - name: Accept Android licenses
       run: |
-        mkdir -p $ANDROID_HOME/cmdline-tools/latest
-        cd $ANDROID_HOME/cmdline-tools/latest
-        unzip -o $ANDROID_SDK_ROOT/cmdline-tools/latest.zip 2>/dev/null || true
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
       env:
         ANDROID_SDK_ROOT: ${{ runner.temp }}/android
