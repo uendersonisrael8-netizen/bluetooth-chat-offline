@@ -1,0 +1,48 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: bluetooth-chat/package-lock.json
+
+    - name: Setup Java JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Install Cordova globally
+      run: npm install -g cordova
+
+    - name: Install dependencies & build APK
+      working-directory: ./bluetooth-chat
+      run: |
+        npm install
+        cordova platform add android
+        cordova build android
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: bluetooth-chat-apk
+        path: bluetooth-chat/platforms/android/app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <title>Bluetooth Chat</title>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                background-color: #f0f2f5;
+                margin: 0;
+                padding: 0;
+                color: #333;
+            }
+            header {
+                background-color: #007aff;
+                color: white;
+                padding: 16px;
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .container {
+                padding: 16px;
+                max-width: 600px;
+                margin: auto;
+            }
+            .card {
+                background: white;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            button {
+                background-color: #007aff;
+                color: white;
+                border: none;
+                padding: 10px 16px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 8px;
+            }
+            button:active {
+                opacity: 0.8;
+            }
+            button.secondary {
+                background-color: #e4e6eb;
+                color: #050505;
+            }
+            ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            li {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            li:last-child {
+                border-bottom: none;
+            }
+            #chat-screen {
+                display: none;
+                flex-direction: column;
+                height: calc(100vh - 60px);
+            }
+            #messages {
+                flex: 1;
+                overflow-y: auto;
+                padding: 16px;
+                background: #e5ddd5;
+                display: flex;
+                flex-direction: column;
+            }
+            .message {
+                max-width: 70%;
+                padding: 10px 14px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+                word-wrap: break-word;
+                font-size: 14px;
+            }
+            .message.incoming {
+                background: white;
+                align-self: flex-start;
+            }
+            .message.outgoing {
+                background: #dcf8c6;
+                align-self: flex-end;
+            }
+            .chat-input-area {
+                display: flex;
+                padding: 10px;
+                background: #f0f0f0;
+                align-items: center;
+            }
+            .chat-input-area input {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 20px;
+                outline: none;
+                font-size: 14px;
+            }
+            .chat-input-area button {
+                width: auto;
+                margin-top: 0;
+                margin-left: 8px;
+                border-radius: 20px;
+                padding: 10px 20px;
+            }
+            .status {
+                font-size: 13px;
+                color: #666;
+                margin-bottom: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <header id="header-title">Bluetooth Chat</header>
+
+        <!-- Tela de Pareamento / Dispositivos -->
+        <div id="device-screen" class="container">
+            <div class="card">
+                <h3>Dispositivos Pareados</h3>
+                <div id="status-paired" class="status">Carregando...</div>
+                <ul id="paired-list"></ul>
+                <button onclick="loadPairedDevices()">Atualizar Pareados</button>
+            </div>
+
+            <div class="card">
+                <h3>Dispositivos Próximos</h3>
+                <div id="status-discovered" class="status">Toque em buscar para procurar</div>
+                <ul id="discovered-list"></ul>
+                <button onclick="discoverDevices()">Buscar Dispositivos</button>
+                <button class="secondary" onclick="enableBluetooth()">Ativar Bluetooth</button>
+            </div>
+        </div>
+
+        <!-- Tela de Conversa (Chat) -->
+        <div id="chat-screen">
+            <div style="padding: 8px 16px; background: #f8f9fa; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+                <span id="connected-device-name" style="font-weight: bold; font-size: 14px;">Conectado</span>
+                <button class="secondary" style="width: auto; margin-top: 0; padding: 6px 12px;" onclick="disconnect()">Desconectar</button>
+            </div>
+            <div id="messages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="message-input" placeholder="Digite sua mensagem..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+
+        <script src="cordova.js"></script>
+        <script src="js/index.js"></script>
+    </body>
+</html>
