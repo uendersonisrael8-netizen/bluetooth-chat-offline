@@ -30,16 +30,29 @@ jobs:
 
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+      with:
+        api-level: 36
+        construct-api-level: true
 
-    - name: Install Cordova globally
-      run: npm install -g cordova
+    - name: Accept Android licenses
+      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+      env:
+        ANDROID_SDK_ROOT: ${{ runner.temp }}/android
 
-    - name: Install dependencies & build APK
+    - name: Install dependencies
+      working-directory: ./bluetooth-chat
+      run: npm install
+
+    - name: Add Android platform
+      working-directory: ./bluetooth-chat
+      run: cordova platform add android
+
+    - name: Build Android APK
       working-directory: ./bluetooth-chat
       run: |
-        npm install
-        cordova platform add android
-        cordova build android
+        export ANDROID_HOME=$ANDROID_HOME
+        export ANDROID_SDK_ROOT=$ANDROID_HOME
+        cordova build android --release
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
